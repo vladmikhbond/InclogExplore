@@ -3,12 +3,25 @@ const inclog = require('./inclog');
 const SEPARATOR = "@#$";
 
 
-var fname = "fpTisheninova28201.txt";   
-//var fname = "fpBurtsev28200.txt";  
-//var fname = "fpBerkovskyi28197.txt";
-const logStr = fs.readFileSync('data/' + fname, 'utf8').slice(1);
+// В файле fname находится текст "_имя_\t_лог_\n_имя_\t_лог_\n..." в кодировке utf8.
+// Этот текст получен следующим запросом в Tut30:
+//   select username, codelogx from ticket
+//   where lang='hs' and codelogx is not null and taskid = 1148
+//
+function frame (fname) {
+    const content = fs.readFileSync(fname, 'utf8').trimEnd();
+    let pairs = content.split('\n').map(x => x.split('\t'));
+    for (let pair of pairs) {
+        console.log("--------------------------------------------------------------------");
+        console.log(`user name: ${pair[0]}    brutto log size: ${pair[1].length}`);
+        d_investigatin (pair[1], 1);
+    }
+    
+}
 
-d_investigatin(logStr, 10);
+frame("./data/tests.txt");
+
+
 
 // Исследует зависимость объeма лога (чистого) от параметра d - минимального размера общей строки
 // logStr - строка лога, созданного при d = 1
@@ -16,7 +29,7 @@ d_investigatin(logStr, 10);
 //
 function d_investigatin (logStr, dMax) 
 {
-    console.log(`brutto log size: ${logStr.length}`);
+    
     let logJson = JSON.parse(logStr); 
     
     // frames - массив состояний кода 
@@ -44,10 +57,10 @@ function d_investigatin (logStr, dMax)
     let sum = depths.reduce((a, x) => a + x);
     
     let maxDeep = Math.max(...depths);
-    let avgDeep = sum / nonZeroDepths.length;
-    let thinK =  nonZeroDepths.length / depths.length;
+    let avgDeep = (sum / nonZeroDepths.length).toFixed(2);
+    let thinK =  (nonZeroDepths.length / depths.length).toFixed(2);
 
-    console.log(`max depth: ${maxDeep}     avg depth: ${avgDeep}      thinK: ${thinK}`);    
+    console.log(`max log depth: ${maxDeep}     avg log depth: ${avgDeep}      thinK: ${thinK}`);    
     
 }
 
